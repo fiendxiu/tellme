@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+{% block content %}
+       <p>
+          <table class="table table-striped table-bordered table-condensed">
+        <thead>
+        <tr>
+       <th>客户CID</th><th>客户合同名</th><th>安装名义</th><th>业务员</th><th>BP</th><th>客户服务类型</th><th>客户状态</th><th>客户创建日期</th><th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for cid in cidroom.object_list %}
+        <tr>
+        <td><a href="/cid/list/{{ cid.cid }}/{{ flag }}">{{ cid.cid }}</a></td>
+        <td>{{ cid.contractname }}</td>
+        <td>{{ cid.typeid }}</td>
+        <td>{{ cid.sales}}</td>
+        <td>{{ cid.bp}}</td>
+        <td>{{ cid.servertype}}</td>
+        <td><span style="color:red"> {{ cid.status }}</span> </td>
+        <td>{{ cid.cidcreate_date }}</td>
+        <td>
+         {% if  perms.tellme.change_cid %}
+         <a href="/cid/edit/{{ cid.cid }}">修改</a>&nbsp; &nbsp;
+         {% endif %}
+         {% if  perms.tellme.add_site %}
+         <a href="/site/add/{{ cid.cid }}">增加Site</a>&nbsp; &nbsp;
+         {% endif %}
+         {% if  perms.tellme.delete_cid %}
+          <a href="/cid/del/{{ cid.cid }}">删除</a>
+         {% endif %}
+         </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        <table class="table table-striped table-bordered table-condensed">
+        <thead>
+        <tr>
+         <th>站点ID</th><th>站点名</th><th>站点地址</th><th>联络人</th><th>联络电话</th><th>联络Email</th><th>站点状态</th><th>创建日期</th><th>站点图片</th><th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for site in siteroom.object_list %}
+        <tr>
+        <td><a href="/site/list/{{ site.siteid }}/{{ flag }}">{{ site.siteid }}</a></td>
+        <!-- <td>{{ site.oldcid }}</td> -->
+        <td>{{ site.sitename }}</td>
+        <td>{{ site.siteaddr }}</td>
+        <td>{{ site.contacts }}</td>
+        <td>{{ site.sitecontact}}</td>
+        <td>{{ site.siteemail }}</td>
+        <td><span style="color:red"> {{ site.status }}</span> </td>
+        <td>{{ site.sitecreate_date }}</td> 
+        <td><a href="/image/cid_image/{{ site.siteid }}/" rel="external">查看站点图片</a></td>
+        <td>
+          {% if  perms.tellme.change_site %}
+          <a href="/site/edit/{{ site.siteid }}">修改</a>&nbsp; &nbsp;
+          <a href="/image/upload.php?cid={{ site.siteid }}" rel="external">增加站点图片</a>&nbsp; &nbsp;
+          {% endif %}
+           {% if  perms.tellme.add_service %}
+             <a href="/service/add/{{ site.siteid }}">增加站点服务(service)</a>&nbsp; &nbsp;
+           {% endif %}
+          {% if  perms.tellme.add_line %}
+          <a href="/line/add/{{ site.siteid }}">增加Line</a>&nbsp; &nbsp;
+          {% endif %}
+          
+          {% if  perms.tellme.delete_site %}
+          <a href="/site/del/{{ site.siteid }}">删除</a>&nbsp; &nbsp;
+          {% endif %}
+          <a href="/site/list/{{ site.siteid }}/0">显示OFF状态</a>
+         </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        <table class="table table-striped table-bordered table-condensed">
+        <thead>
+        <tr>
+         <th>服务ID</th><th>服务类型</th><th>包含的设备清单</th><th>服务费用计算方式</th><th>Service状态</th><th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for service in serviceroom.object_list %}
+        <tr>
+        <td><a href="/service/list/{{ service.serviceid }}/{{ flag }}">{{ service.serviceid }}</a></td>
+        <td>{{ service.servicetype }}</a></td>
+        <td>{{ service.serviceshebei }}</td>
+        <td>{{ service.servicefeiyong}}</td>
+        <td><span style="color:red"> {{ service.status }}</span></td>
+        <td>
+          {% if  perms.tellme.change_service %}
+            <a href="/service/edit/{{ service.serviceid }}">修改</a>&nbsp; &nbsp;
+          {% endif %}
+          {% if  perms.tellme.delete_service %}
+            <a href="/service/del/{{ service.serviceid }}">删除</a>
+          {% endif %}
+        </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        <table class="table table-striped table-bordered table-condensed">
+        <thead>
+        <tr>
+         <th>线路ID</th><th>接入路由器</th><th>接入端口</th><th>WanIP</th><th>LanIP</th><th>(主/备)类型</th><th>路由器用户和密码</th><th>线路状态</th><th>操作</th><th>Ticket</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for line in room.object_list %}
+        <tr>
+        <td><a href="/line/list/{{ line.lineid }}/{{ flag }}">{{ line.lineid }}</a></td>
+        <td>{{ line.lineserver }}</a></td>
+        <td>{{ line.lineport }}</td>
+        <td>{{ line.linewanip}}</td>
+        <td>{{ line.linelanip}}</td>
+        <td>{{ line.linejifangtype}}</td>
+        <td>{{ line.linepass }}</td>
+        <td><span style="color:red"> {{ line.status }}</span></td>
+        <td>
+          {% if  perms.tellme.change_line %}
+	    <a href="http://192.168.55.250:10099/webqc.php?id={{ line.lineid }}" target="_blank">QC检查</a>&nbsp; &nbsp;
+	    <a href="/line/addmonitor/{{ line.lineid }}">监控</a>
+            <a href="/line/addmrtg/{{ line.lineid }}">MRTG</a> 
+            <a href="/line/edit/{{ line.lineid }}">修改</a>&nbsp; &nbsp;
+          {% endif %}
+             <a href="http://center.fnetlink.com.hk:10080/cgi-bin/rodge.pl?name={{ line.lineid }}"  rel='external'>查看config</a>&nbsp; &nbsp;
+          {% if  perms.tellme.delete_line %}
+            <a href="/line/del/{{ line.lineid }}">删除</a>
+          {% endif %}
+        </td>
+        <td>
+          <a style="color: red;" href="http://newticket.fnetlink.com:10082/opennew.php?stuser={{ user }}&lineid={{ line.lineid }}&linewanip={{ line.linewanip }}&contractname={{ line.siteid.cid.contractname }}&sitecontact={{ line.siteid.contacts }}&sitephone={{ line.siteid.sitecontact}}&email={{ line.siteid.cid.sales}}" rel="external">创建Ticket</a></td>
+         </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+
+        {% for site in siteroom.object_list %}
+        <strong>最近的记录，查看更多... </strong><a href="http://newticket.fnetlink.com:10082/scp/tickets.php?a=search&query={{ site.siteid }}&basic_search=%E6%90%9C%E7%B4%A2" rel="external">MORE</a>
+        {% endfor %}
+
+        <table class="table table-striped table-bordered table-condensed">
+        <thead>
+        <tr>
+         <th>TICKET ID</th><th>创建工程师</th><th>报障人信息</th><th>创建TICKET原因</th><th>创建时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for j in newticket %}
+        <tr>
+          <td><span style="color:purple">{{ j.0 }}</span></td>
+          <td><span style="color:purple">{{ j.1 }}</span></td>
+          <td><span style="color:purple">{{ j.2 }}</span></td>
+          <td><span style="color:purple">{{ j.4 }}</span></td>
+          <td><span style="color:purple">{{ j.3 }}</span></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+
+        <table class="table table-striped table-bordered table-condensed">
+        <thead>
+        <tr>
+         <th>TICKET ID</th><th>创建工程师</th><th>报障人</th><th>报障人电话</th><th>创建TICKET原因</th><th>创建时间</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for i in ticket %}
+        <tr>
+          <td><span style="color:purple">{{ i.0 }}</span></td>
+          <td><span style="color:purple">{{ i.1 }}</span></td>
+          <td><span style="color:purple">{{ i.2 }}</span></td>
+          <td><span style="color:purple">{{ i.3 }}</span></td>
+          <td><span style="color:purple">{{ i.5 }}</span></td>
+          <td><span style="color:purple">{{ i.4 }}</span></td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        </p>
+{% endblock %}

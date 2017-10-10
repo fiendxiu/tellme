@@ -1,0 +1,160 @@
+{% extends "base.html" %}
+{% block content %}
+<table class="table table-striped table-bordered table-condensed">
+        <thead>
+        {% for cid in cidroom.object_list %}
+        <tr>
+        <th>客户CID:</th>&nbsp; &nbsp;<td> <a href="/cid/list/{{ cid.cid }}/{{ flag }}">{{ cid.cid }}</a></td>
+        <th>用户登录查看Mrtg流量服务器:</th>&nbsp; &nbsp;
+         <td>
+          <a href="{{ cid.mrtg_server }}" target="_blank">{{ cid.mrtg_server }}</a>
+         </td>
+        </tr>
+        <tr>
+        <th>客户合同名:</th>&nbsp; &nbsp;
+        <td>{{ cid.contractname }}</td>
+        <th>mrtg客户账号资料:</th>&nbsp; &nbsp;
+         <td>
+         {{ cid.mrtg_pass }}
+         </td>
+        </tr>
+        <tr>
+         <th>集团ID:</th> &nbsp; &nbsp;
+         <td> {{ cid.jtid }}</td>
+        <th>用户登录Netflow的服务器:</th>&nbsp; &nbsp;
+          <td>
+           <a href="{{ cid.netflow_server }}" target="_blank">{{ cid.netflow_server }}</a>
+          </td>
+         </tr>
+        <tr>
+        <th>安装名义:</th>&nbsp; &nbsp;
+        <td>{{ cid.typeid }}</td>
+        <th>netflow客户账号资料:</th>&nbsp; &nbsp;
+          <td>
+         {{ cid.netflow_pass }}
+           </td>
+        </tr>
+        <tr>
+	<tr>
+        <th>客户服务类型:</th>&nbsp; &nbsp;
+        <td>{{ cid.servertype }}</td>
+        <th>App客户账号资料:</th>&nbsp; &nbsp;
+          <td>
+         {{ cid.App_pass }}
+           </td>
+        </tr>
+        <tr>
+        <th>业务员:</th>&nbsp; &nbsp; 
+        <td>{{ cid.sales}}</td>
+        <th>客户状态:</th>&nbsp; &nbsp;
+        <td><span style="color:red"> {{ cid.status }}</span> </td>
+        </tr>
+        <tr>
+        <th>BP:</th>&nbsp; &nbsp;
+        <td>{{ cid.bp}}</td>
+         <th>客户创建日期:</th>&nbsp; &nbsp;
+        <td>{{ cid.cidcreate_date }}</td>
+        </tr>
+<!--        <tr>
+        <th>用户登录查看Mrtg流量服务器:</th>&nbsp; &nbsp;
+         <td>
+         {{ cid.mrtg_server }}
+         </td>
+        </tr>
+        <tr>
+        <th>mrtg客户账号资料:</th>&nbsp; &nbsp;
+         <td>
+         {{ cid.mrtg_pass }}
+         </td>
+         </tr>
+        <tr>
+        <th>用户登录Netflow的服务器:</th>&nbsp; &nbsp;
+          <td>
+         {{ cid.netflow_server }}
+          </td>
+         </tr>
+        <tr>
+        <th>netflow客户账号资料:</th>&nbsp; &nbsp;
+          <td>
+         {{ cid.netflow_pass }}
+           </td>
+         </tr>
+        <tr>
+        <th>App客户账号资料:</th>&nbsp; &nbsp;
+          <td>
+         {{ cid.App_pass }}
+           </td>
+         </tr>
+        {{ cid.cid_rd }}
+           </td>
+        </tr>
+         <tr>
+        <th>客户状态:</th>&nbsp; &nbsp;
+        <td><span style="color:red"> {{ cid.status }}</span> </td>
+        </tr>
+        <tr>
+         <th>客户创建日期:</th>&nbsp; &nbsp;
+        <td>{{ cid.cidcreate_date }}</td> 
+         </tr>
+-->
+        <tr>
+       <th>操作</th>&nbsp; &nbsp; 
+        <td>
+         {% if  perms.tellme.change_cid %}
+         <a href="/cid/edit/{{ cid.cid }}">修改</a>&nbsp; &nbsp;
+         {% endif %}
+         {% if  perms.tellme.add_site %}
+         <a href="/site/add/{{ cid.cid }}">增加Site</a>&nbsp; &nbsp;
+         {% endif %}
+         {% if  perms.tellme.delete_cid %}
+         <a href="/cid/del/{{ cid.cid }}">删除</a>
+         {% endif %}        
+         </td>
+        <th></th><td></td>
+        </tr> 
+        {% endfor %}
+        </thead>
+</table>       
+         <table class="table table-striped table-bordered table-condensed">
+        <thead>
+        <tr>
+         <th>站点ID</th><th>站点名</th><th>站点地址</th><th>联络人</th><th>联络电话</th><th>联络Email</th><th>站点状态</th><th>创建日期</th><th>查看站点图片</th><th>查看验收报告</th><th>操作</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for site in room.object_list %}
+        <tr>
+        <td><a href="/site/list/{{ site.siteid }}/{{ flag }}">{{ site.siteid }}</a></td>
+        <!-- <td>{{ site.oldcid }}</td> -->
+        <td>{{ site.sitename }}</td>
+        <td>{{ site.siteaddr }}</td>
+        <td>{{ site.contacts }}</td>
+        <td>{{ site.sitecontact}}</td>
+        <td>{{ site.siteemail }}</td>
+        <td><span style="color:red"> {{ site.status }}</span> </td>
+        <td>{{ site.sitecreate_date }}</td> 
+        <td><a href="/image/cid_image/{{ site.siteid }}/" rel="external">查看站点图片</a></td>
+	<td><a href="/image/PM_report/{{ site.siteid }}/" rel="external">查看验收报告</a></td>
+        <td> 
+          {% if  perms.tellme.change_site %}
+          <a href="/site/edit/{{ site.siteid }}">修改</a>&nbsp; &nbsp;
+          <a href="/image/upload.php?cid={{ site.siteid }}" rel="external">增加站点图片</a>&nbsp; &nbsp;
+	  <a href="/image/upload_report.php?cid={{ site.siteid }}" rel="external">增加验收报告</a>&nbsp; &nbsp;
+          {% endif %}
+           {% if  perms.tellme.add_service %}
+             <a href="/service/add/{{ site.siteid }}">增加站点服务(service)</a>&nbsp; &nbsp;
+           {% endif %}
+          {% if  perms.tellme.add_line %}
+          <a href="/line/add/{{ site.siteid }}">增加Line</a>&nbsp; &nbsp;
+          {% endif %}
+          {% if  perms.tellme.delete_site %}
+          <a href="/site/del/{{ site.siteid }}">删除</a>&nbsp; &nbsp;
+          {% endif %}
+          <a href="/site/list/{{ site.siteid }}/0">显示OFF状态</a>
+          </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+        </table>
+        </p>
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block  search %} {% endblock %}
+{% block searchlist  %}
+   <center>  
+    <form  action="/search/" method="GET"> {% csrf_token %} 
+                 <select name="info">
+		      <option value="hetong">客户合同名</option>
+                     <option value="sitename">客户站点名称</option>
+                      <option value="cid">CID</option>
+                    　<option value="siteaddr">客户地址</option>
+                    　<option value="cidcont">联络资料</option>
+                    　<option value="ip">IP地址</option>
+		      <option value="PE">接入PE</option>
+                      <option value="svrnum">公司服务编号</option>
+                      <option value="linenum">线路编号</option>
+                </select>&nbsp;:&nbsp;&nbsp;
+                <input class="span2" type="text" name="q"  placeholder="输入你要查询的资料">
+                <input type="checkbox" name="filterOff" checked="true" />过滤OFF
+                <button class="btn" type="submit">搜一下</button>
+        </form>
+    {% if not error %}
+                <p style="color: red;">以下是查询结果:！！</p>
+        {% endif %}
+{% block search_ye1 %}
+        {% if room.has_previous %}
+          {% if room.pervious_page_number %}
+           <a href="{{ curl }}&page={{ room.pervious_page_number }}" >上一页</a>
+          {% else %}
+            <a href="{{ curl }}&page=1" >上一页</a>
+          {% endif %}
+        {% endif %}
+        当前页 {{ room.number }} 共 {{ room.paginator.num_pages }}
+        {% if room.has_next %}
+        <a href="{{ curl }}&page={{ room.next_page_number }}">下一页</a>
+        {% endif %}
+{% endblock %}
+        {% include   type|add:"/list.html"  %}   
+    </center>
+{% endblock %}
+ {% block search_ye2 %}
+        {% if room.has_previous %}
+            {% if room.pervious_page_number %}
+           <a href="{{ curl }}&page={{ room.pervious_page_number }}" >上一页</a>
+          {% else %}
+            <a href="{{ curl }}&page=1" >上一页</a>
+          {% endif %}
+        {% endif %}
+        当前页 {{ room.number }} 共 {{ room.paginator.num_pages }}
+        {% if room.has_next %}
+        <a href="{{ curl }}&page={{ room.next_page_number }}">下一页</a>
+        {% endif %}
+{% endblock %}

@@ -1,0 +1,13 @@
+<?php
+//echo $_FILES["pic"]["name"];
+//echo $_FILES["pic"]["type"];
+//echo $_FILES["pic"]["size"];
+if($_FILES["pic"]["size"]>512*1024){
+	echo $_POST["name"];
+	echo "invalidate file type";
+}else{
+	move_uploaded_file($_FILES["file"]["tmp_name"],"testuploadfile/".$_FILES["file"]["name"]);
+	echo $_FILES["file"]["name"];
+	echo $_POST["name"];
+}
+?>

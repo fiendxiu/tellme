@@ -1,0 +1,63 @@
+<!DOCTYPE html >
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tellme</title>
+<link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/bootstrap/js/tellme.js"></script>
+</head>
+<body>
+<div class="container">
+        <div class="nav nav-tabs"> 欢迎用户&nbsp; <a style="color: red;">{{ user }}</a>  &nbsp; 登录 </div>
+        <ul class="nav nav-tabs">
+        <li class="active">
+        <a href="/">搜索</a>
+        </li>
+        <li>
+        <a href="/jtid/">集团ID资料</a>
+        </li>
+        <li>
+        <a href="/cid/">客户CID资料</a>
+        </li>
+        <li>
+        <a href="/site/">站点资料</a>
+        </li>
+        <li>
+        <a href="/line/">线路资料</a>
+        </li>
+        {% if  user.is_staff  %}
+        <li>
+        <a href="/admin/" rel="external">后台管理</a>
+        </li>
+        {% else %}
+        <li>
+        <a href="/user/change_pass/">修改密码</a>
+        </li>
+        {% endif %}
+        <li>
+        <a href="/logout/">注销</a>
+        </li>
+        </ul>
+        <center>
+        <form  action="/search/" method="GET"> {% csrf_token %} 
+                 <select name="info">
+                      <option value="sitename">客户站点名称</option>
+                      <option value="cid">CID</option>
+                    　<option value="cidaddr">客户地址</option>
+                    　<option value="cidcont">联络资料</option>
+                    　<option value="ip">IP地址</option>
+                </select>&nbsp;:&nbsp;&nbsp;
+                <input class="span2" type="text" name="q"  placeholder="输入你要查询的资料">
+                <button class="btn" type="submit">搜一下</button>
+        </form>
+
+    </div>
+
+
+
+</div>
+</body>
+</html>

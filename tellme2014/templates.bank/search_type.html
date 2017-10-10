@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block search  %} 
+<div style="width:230px; float:left; overflow:hidden" >
+	<form action="" method="POST"> {% csrf_token %} 
+            请输入{{ type }}: <input type="text" name="q" />
+             <input type="submit" value="查询">
+	</form>
+</div>
+{% if  form %}
+                <p style="color: red;">以下是查询结果:！！</p>
+{% else %}
+ <p style="color: red;">以下是最近15条&nbsp;{{ type|upper }}&nbsp;的记录:！！</p>
+{% endif %}
+{% include   type|add:"/list.html"  %}
+{% endblock %}

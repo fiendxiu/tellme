@@ -1,0 +1,259 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" >
+<head>
+<title>增加 site | Django 站点管理员</title>
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+<!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="/static/admin/css/ie.css" /><![endif]-->
+
+<script type="text/javascript">window.__admin_media_prefix__ = "/static/admin/";</script>
+
+
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+</head>
+
+
+<body class="tellme-site change-form">
+
+<!-- Container -->
+<div id="container">
+
+    
+    <!-- Header -->
+    <div id="header">
+        <div id="branding">
+        
+<h1 id="site-name">Django 管理</h1>
+
+        </div>
+        
+        <div id="user-tools">
+            欢迎，
+            <strong>tellme</strong>.
+            
+                
+                
+                <a href="/admin/password_change/">修改密码</a> /
+                <a href="/admin/logout/">注销</a>
+            
+        </div>
+        
+        
+    </div>
+    <!-- END Header -->
+    
+<div class="breadcrumbs">
+<a href="/admin/">首页</a>
+&rsaquo; <a href="/admin/tellme/">Tellme</a>
+&rsaquo; <a href="/admin/tellme/site/">Sites</a>
+&rsaquo; 增加 site
+</div>
+
+    
+
+    
+        
+    
+
+    <!-- Content -->
+    <div id="content" class="colM">
+        
+        <h1>增加 site</h1>
+        <div id="content-main">
+
+
+
+<form enctype="multipart/form-data" action="" method="post" id="site_form"><div style='display:none'><input type='hidden' name='csrfmiddlewaretoken' value='v6WrGK66WY1FE7Mp58ZGp6rbJ4N0FeIp' /></div>
+<div>
+
+
+
+
+
+
+  <fieldset class="module aligned ">
+    
+    
+    
+        <div class="form-row field-cid">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_cid" class="required">Cid:</label>
+                        
+                            <select name="cid" id="id_cid">
+<option value="" selected="selected">---------</option>
+<option value="2014">2014 --- 刘远东 </option>
+<option value="2015">2015 --- 节能 </option>
+</select><a href="/admin/tellme/cid/add/" class="add-another" id="add_id_cid" onclick="return showAddAnotherPopup(this);"> <img src="/static/admin/img/icon_addlink.gif" width="10" height="10" alt="添加另一个"/></a>
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-siteid">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_siteid" class="required">SiteID:</label>
+                        
+                            <input id="id_siteid" type="text" class="vTextField" name="siteid" maxlength="255" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-sitename">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_sitename" class="required">站点名:</label>
+                        
+                            <input id="id_sitename" type="text" class="vTextField" name="sitename" maxlength="50" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-siteaddr">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_siteaddr" class="required">地址:</label>
+                        
+                            <input id="id_siteaddr" type="text" class="vTextField" name="siteaddr" maxlength="50" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-sitecontact">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_sitecontact">联络资料:</label>
+                        
+                            <input id="id_sitecontact" type="text" class="vTextField" name="sitecontact" maxlength="50" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-sitestatus">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_sitestatus" class="required">站点状态:</label>
+                        
+                            <select name="sitestatus" id="id_sitestatus">
+<option value="ON" selected="selected">ON</option>
+<option value="OFF">OFF</option>
+</select>
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-sitecreate_date">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_sitecreate_date" class="required">创建日期:</label>
+                        
+                            <input id="id_sitecreate_date" type="text" class="vDateField" name="sitecreate_date" size="10" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+</fieldset>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="submit-row">
+<input type="submit" value="保存" class="default" name="_save" />
+
+
+<input type="submit" value="保存并增加另一个" name="_addanother"  />
+<input type="submit" value="保存并继续编辑" name="_continue" />
+</div>
+
+
+
+   <script type="text/javascript">document.getElementById("id_cid").focus();</script>
+
+
+
+
+<script type="text/javascript">
+(function($) {
+    var field;
+
+
+})(django.jQuery);
+</script>
+
+
+</div>
+</form></div>
+
+        
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+
+</body>
+</html>
+

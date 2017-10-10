@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block searchlist  %}
+   <center>  
+    <form  action="/search/" method="GET"> {% csrf_token %} 
+                 <select name="info">
+                     <option value="sitename">客户站点名称</option>
+                      <option value="cid">CID</option>
+                    　<option value="siteaddr">客户地址</option>
+                    　<option value="cidcont">联络资料</option>
+                    　<option value="ip">IP地址</option>
+                </select>&nbsp;:&nbsp;&nbsp;
+                <input class="span2" type="text" name="q"  placeholder="输入你要查询的资料">
+                <button class="btn" type="submit">搜一下</button>
+        </form>
+    {% if not error %}
+                <p style="color: red;">以下是查询结果:！！</p>
+        {% endif %}
+        {% include   type|add:"/list.html"  %}   
+    </center>
+{% endblock %}

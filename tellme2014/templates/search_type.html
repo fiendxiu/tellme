@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block searchtype  %} 
+<div style="width:230px; float:left; overflow:hidden" >
+	<form action="./" method="POST"> {% csrf_token %} 
+            请输入{{ type }}的ID值: <input type="text" name="q" />
+             <input type="submit" value="查询">
+	</form>
+</div>
+<div>
+{% if  jieguo %}
+                <p style="color: red;">以下是查询结果:！！</p>
+{% else %}
+ <p style="color: red;">以下是最近15条&nbsp;{{ type|upper }}&nbsp;的记录:！！</p>
+{% endif %}
+</div>
+ <div>
+                   {% if room.has_previous %}
+                      {% if room.pervious_page_number %}
+                         <a href="?page={{ room.pervious_page_number }}" >上一页</a>
+                      {% else %}
+                         <a href="?page=1" >上一页</a>
+                      {% endif %}
+                   {% endif %}
+                   当前页 {{ room.number }} 共 {{ room.paginator.num_pages }}
+                   {% if room.has_next %}
+                   <a href="?page={{ room.next_page_number }}">下一页</a>
+                   {% endif %}
+ </div>
+{% include   type|add:"/list.html"  %}
+{% endblock %}

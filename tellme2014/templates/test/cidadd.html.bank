@@ -1,0 +1,211 @@
+{% extends "base.html" %}
+{% block head1 %}
+<link rel="stylesheet" type="text/css" href="/static/admin/css/base.css" />
+<link rel="stylesheet" type="text/css" href="/static/admin/css/forms.css" />
+<!--[if lte IE 7]><link rel="stylesheet" type="text/css" href="/static/admin/css/ie.css" /><![endif]-->
+
+<script type="text/javascript">window.__admin_media_prefix__ = "/static/admin/";</script>
+
+
+<script type="text/javascript" src="/admin/jsi18n/"></script>
+<script type="text/javascript" src="/static/admin/js/core.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.js"></script>
+<script type="text/javascript" src="/static/admin/js/jquery.init.js"></script>
+<script type="text/javascript" src="/static/admin/js/actions.js"></script>
+<script type="text/javascript" src="/static/admin/js/calendar.js"></script>
+<script type="text/javascript" src="/static/admin/js/admin/DateTimeShortcuts.js"></script>
+
+<meta name="robots" content="NONE,NOARCHIVE" />
+{% endblock %}
+
+{% block add %}
+    
+    <!-- Content -->
+    <div id="content" class="colM">
+        
+        <h1>增加 cid</h1>
+        <div id="content-main">
+        {% if form.errors %}
+        <p style="color: red;">
+            Please correct the error{{ form.errors|pluralize }} below.
+        </p>
+        {% endif %}
+         <form enctype="multipart/form-data" action="" method="post" id="cid_form">{% csrf_token %} 
+<div>
+
+
+
+
+
+
+  <fieldset class="module aligned ">
+    
+    
+    
+        <div class="form-row field-cid">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_cid" class="required">CID:</label>
+                        
+                            <input id="id_cid" type="text" class="vIntegerField" name="cid" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-contractname">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_contractname" class="required">客户合同名:</label>
+                        
+                            <input id="id_contractname" type="text" class="vTextField" name="contractname" maxlength="50" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-typeid">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_typeid" class="required">安装名义:</label>
+                        
+                            <input name="typeid" value="东莞光联" class="vTextField" maxlength="50" type="text" id="id_typeid" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-sales">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_sales" class="required">业务员:</label>
+                        
+                            <input id="id_sales" type="text" class="vTextField" name="sales" maxlength="50" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-bp">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_bp">BP:</label>
+                        
+                            <input id="id_bp" type="text" class="vTextField" name="bp" maxlength="50" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-status">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_status" class="required">客户状态:</label>
+                        
+                            <select name="status" id="id_status">
+<option value="ON" selected="selected">ON</option>
+<option value="OFF">OFF</option>
+</select>
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+        <div class="form-row field-cidcreate_date">
+            
+            
+                <div>
+                    
+                    
+                        <label for="id_cidcreate_date" class="required">创建日期:</label>
+                        
+                            <input id="id_cidcreate_date" type="text" class="vDateField" name="cidcreate_date" size="10" />
+                        
+                    
+                    
+                </div>
+            
+        </div>
+    
+</fieldset>
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="submit-row">
+<input type="submit" value="保存" class="default" name="_save" />
+
+
+<input type="submit" value="保存并增加另一个" name="_addanother"  />
+<input type="submit" value="保存并继续编辑" name="_continue" />
+</div>
+
+
+
+   <script type="text/javascript">document.getElementById("id_cid").focus();</script>
+
+
+
+
+<script type="text/javascript">
+(function($) {
+    var field;
+
+
+})(django.jQuery);
+</script>
+
+
+</div>
+</form></div>
+
+        
+        <br class="clear" />
+    </div>
+    <!-- END Content -->
+
+    <div id="footer"></div>
+</div>
+<!-- END Container -->
+{% endblock %}
+

@@ -1,0 +1,368 @@
+# Create your views here.
+# coding: utf-8
+from models import *
+from django.shortcuts import render_to_response,get_object_or_404
+from django.http import HttpResponse,HttpResponseRedirect
+from django.template import Template,loader,RequestContext
+import time,datetime
+from forms import *
+from other import paging,Modelskey,Formskey,Forskey,Idkey
+from django.db import IntegrityError
+from django.contrib.auth.decorators import permission_required
+#from monit import createrrd,todayimage,weeksimage,monthimage
+from django.views.decorators.csrf import csrf_exempt
+from django.db.models import Q
+#from django.forms.models import model_to_dict
+import re
+
+@csrf_exempt
+def index(request):
+        if request.user.is_authenticated():
+                if request.method == 'GET':
+                        data = Cid.objects.all() 
+                        room = paging(data,request.GET.get('page','1'))
+                return render_to_response('index.html',{'room':room,'today':datetime.datetime.today()},context_instance=RequestContext(request)) 
+        return HttpResponseRedirect('/login/')
+
+def displayold(request,url):
+        if request.user.is_authenticated():
+                form = Formskey(url)(request.POST)
+                if request.method == 'POST':
+                        if form.is_valid():
+                                form.save()
+                                if ( url == 'server' and request.POST['ip'] != ''):
+                                        createrrd(request.POST['ip'])
+                                return HttpResponseRedirect('/'+url+'/')
+                data = Modelskey(url).objects.all()
+                room = paging(data,request.GET.get('page','1'))
+                return render_to_response(url+'.html',{'form':form,'room':room,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+def display(request,url):
+        curl = request.get_full_path()
+        if request.user.is_authenticated():
+             form = Formskey(url)(request.POST)
+             if url == 'site' or url == 'line' or url == 'service' : 
+                if request.method == 'POST' and   request.POST['q'] :
+                     data = Modelskey(url).objects.filter(pk__icontains=request.POST['q'])
+                     room = paging(data,request.GET.get('page','1'))
+                     request.session['url_request'] = request.POST['q']
+                     ##return render_to_response(url+'.html',{'form':form,'room':room,'type':url,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+                     return render_to_response('search_type.html',{'curl':curl,'form':form,'room':room,'type':url,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+                else:
+                     data = Modelskey(url).objects.all()[:15]
+                     #data = Modelskey(url).objects.all()
+                     room = paging(data,request.GET.get('page','1'))                
+                     return render_to_response('search_type.html',{'curl':curl,'room':room,'type':url},context_instance=RequestContext(request))
+             elif url == 'jtid' :
+                  jiegou = False
+                  if request.method == 'POST' and  request.POST['q'] :
+                     data = JituanID.objects.filter(jtid__icontains=request.POST['q'])
+                     if len(data) > 0 :
+                        jiegou = True
+                  else:
+                     data = Modelskey(url).objects.all()
+                  room = paging(data,request.GET.get('page','1'))
+                  return render_to_response(url+'.html',{'curl':curl,'form':form,'room':room,'type':url,'jiegou':jiegou,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+
+             else:
+                jiegou = False 
+                if request.method == 'POST' and  request.POST['q'] :
+                     data = Cid.objects.filter(cid__icontains=request.POST['q'])
+                     if len(data) > 0 :
+                        jiegou = True
+                                         
+                else:
+                     data = Modelskey(url).objects.all()[:15]
+                room = paging(data,request.GET.get('page','1'))
+                return render_to_response(url+'.html',{'curl':curl,'form':form,'room':room,'type':url,'jiegou':jiegou,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+def addcid(request,url):
+        if request.user.is_authenticated():
+                if request.method == 'POST':
+                        form = Formskey(url)(request.POST)
+                        if form.is_valid():
+                                cid = request.POST['cid']
+                                form.save()
+                                #return HttpResponseRedirect('/'+url+'/')
+                               
+                                return render_to_response('cidaddok.html',{'cid':cid},context_instance=RequestContext(request))
+                        else:
+                                return render_to_response(url+'add.html',locals(),context_instance=RequestContext(request))
+                form = Formskey(url)
+                
+                try: 
+                   max_id = Cid.objects.all().order_by("-cid")[0].cid
+                except:             
+                   newcid=8000
+                else:
+                   newcid=max_id+1
+                   
+                return render_to_response(url+'add.html',{'form':form,'newcid':newcid},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+def addsite(request,url,id):
+        if request.user.is_authenticated():
+                if request.method == 'POST':
+                        request.POST=request.POST.copy()
+                        request.POST['siteid']=id+request.POST['siteid']
+                        form = Formskey(url)(request.POST)
+                        form.fields['cid'].queryset = Cid.objects.filter(cid=id)
+                        if form.is_valid():
+                                form.save()
+                                #return HttpResponseRedirect('/'+url+'/')
+                                form = Formskey(url)()
+                                form.fields['cid'].queryset = Cid.objects.filter(cid=id)
+                                info=request.POST['siteid']
+                                return render_to_response(url+'add.html',{'form':form,'url':url,'info':info},context_instance=RequestContext(request))
+                        else:
+                                return render_to_response(url+'add.html',locals(),context_instance=RequestContext(request))
+                else:
+                   form = Formskey(url)() 
+                   form.fields['cid'].queryset = Cid.objects.filter(cid=id) 
+                   return render_to_response(url+'add.html',{'form':form,'url':url},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+def addline(request,url,id):
+        if request.user.is_authenticated():
+                if request.method == 'POST':
+                        request.POST=request.POST.copy()
+                        request.POST['lineid']=id+request.POST['lineid']
+                        form = Formskey(url)(request.POST)
+                        form.fields['siteid'].queryset = Site.objects.filter(pk=id)
+                        if form.is_valid():
+                                form.save()
+                                #return HttpResponseRedirect('/'+url+'/')
+                                form = Formskey(url)()
+                                form.fields['siteid'].queryset = Site.objects.filter(siteid=id)
+                                info=request.POST['lineid']
+                                return render_to_response(url+'add.html',{'form':form,'url':url,'info':info},context_instance=RequestContext(request))
+                        else:
+                                return render_to_response(url+'add.html',locals(),context_instance=RequestContext(request))
+                else:
+                   form = Formskey(url)() 
+                   form.fields['siteid'].queryset = Site.objects.filter(pk=id) 
+                   return render_to_response(url+'add.html',{'form':form,'url':url},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+def addservice(request,url,id):
+        if request.user.is_authenticated():
+                if request.method == 'POST':
+                        request.POST=request.POST.copy()
+                        request.POST['serviceid']=id+request.POST['serviceid']
+                        form = Formskey(url)(request.POST)
+                        form.fields['siteid'].queryset = Site.objects.filter(pk=id)
+                        if form.is_valid():
+                                form.save()
+                                #return HttpResponseRedirect('/'+url+'/')
+                                form = Formskey(url)()
+                                form.fields['siteid'].queryset = Site.objects.filter(siteid=id)
+                                info=request.POST['serviceid']
+                                return render_to_response(url+'add.html',{'form':form,'url':url,'info':info},context_instance=RequestContext(request))
+                        else:
+                                return render_to_response(url+'add.html',locals(),context_instance=RequestContext(request))
+                else:
+                   form = Formskey(url)()
+                   form.fields['siteid'].queryset = Site.objects.filter(pk=id)
+                   return render_to_response(url+'add.html',{'form':form,'url':url},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+def addjtid(request,url):
+        if request.user.is_authenticated():
+                if request.method == 'POST':
+                        form = Formskey(url)(request.POST)
+                        if form.is_valid():
+                                form.save()
+                                return HttpResponseRedirect('/'+url+'/')
+                        else:
+                                return render_to_response(url+'add.html',locals(),context_instance=RequestContext(request))
+                form = Formskey(url)
+                return render_to_response(url+'add.html',{'form':form},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+
+
+def editjtid(request,url,id):
+        if request.user.is_authenticated():
+                Modelsurl = get_object_or_404(Modelskey(url),pk=id)
+                if request.method == 'POST':
+                        form = Formskey(url)(request.POST,instance=Modelsurl)
+                        if form.is_valid():
+                                form.save()
+                                return HttpResponseRedirect('/'+url+'/')
+                form = Formskey(url)(instance=Modelsurl)
+                return render_to_response('jtidedit.html',{'form':form,'url':url,'id':id},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+
+def editcid(request,url,id):
+        if request.user.is_authenticated():
+                Modelsurl = get_object_or_404(Modelskey(url),pk=id)
+                if request.method == 'POST':
+                        form = Formskey(url)(request.POST,instance=Modelsurl)
+                        if form.is_valid():
+                                form.save()
+                                return HttpResponseRedirect('/'+url+'/')
+                form = Formskey(url)(instance=Modelsurl)
+                return render_to_response('cidedit.html',{'form':form,'url':url,'id':id},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+def editsite(request,url,id):
+        if request.user.is_authenticated():
+                Modelsurl = get_object_or_404(Modelskey(url),pk=id)
+                #Modelsurl.siteid =re.findall(r"\d?([A-Z])", id)[0]
+                if request.method == 'POST':
+                        #request.POST=request.POST.copy()
+                        #request.POST['siteid']=re.findall(r"(\d+)[A-Z]$", id)[0]+request.POST['siteid']
+                        form = Formskey(url)(request.POST,instance=Modelsurl)
+                        if form.is_valid():
+                                form.save()
+                                return HttpResponseRedirect('/'+url+'/')
+                form = Formskey(url)(instance=Modelsurl)
+                return render_to_response(url+'edit.html',{'form':form,'url':url,'id':id},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+def editline(request,url,id):
+        if request.user.is_authenticated():
+                Modelsurl = get_object_or_404(Modelskey(url),pk=id)
+                #Modelsurl.lineid =re.findall(r"\d?[A-Z](\d+)$", id)[0]
+                if request.method == 'POST':
+                        #request.POST=request.POST.copy()
+                        #request.POST['lineid']=id+request.POST['lineid']
+                        #request.POST['lineid']=+request.POST['lineid']re.findall(r"\d?[A-Z](\d+)$", id)[0]+request.POST['lineid']
+                        form = Formskey(url)(request.POST,instance=Modelsurl)
+                        if form.is_valid():
+                                form.save()                                
+                                return HttpResponseRedirect('/'+url+'/')
+                form = Formskey(url)(instance=Modelsurl)
+                return render_to_response(url+'edit.html',{'form':form,'url':url,'id':id},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+def editservice(request,url,id):
+        if request.user.is_authenticated():
+                Modelsurl = get_object_or_404(Modelskey(url),pk=id)
+                if request.method == 'POST':
+                       
+                        form = Formskey(url)(request.POST,instance=Modelsurl)
+                        if form.is_valid():
+                                form.save()
+                                return HttpResponseRedirect('/'+url+'/')
+                form = Formskey(url)(instance=Modelsurl)
+                return render_to_response(url+'edit.html',{'form':form,'url':url,'id':id},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+
+def delete(request,url,id):
+        if request.user.is_authenticated():
+                Del = get_object_or_404(Modelskey(url),pk=id)
+                try:
+                        Del.delete()
+                except  IntegrityError:
+                        errors = "底下有分类数据未清空！无法删除"
+                        return render_to_response('error.html',{'errors':errors},context_instance=RequestContext(request))
+                else:
+                        return HttpResponseRedirect('/'+url+'/')
+        return HttpResponseRedirect('/login/')
+
+ 
+def list(request,url,id):
+        curl = request.get_full_path()
+        if request.user.is_authenticated():
+                #pag = Modelskey(url).objects.get(siteid=id)
+                if url == 'jtid':
+                        jtdata = JituanID.objects.filter(jtid=id)
+                        ciddata = Cid.objects.filter(jtid_id=id)
+                        cidroom = paging(ciddata,request.GET.get('page','1'))
+                        jtroom =  paging(jtdata,request.GET.get('page','1'))                        
+                        return render_to_response(url+'list.html',{'curl':curl,'cidroom':cidroom ,'jtroom':jtroom ,'room':cidroom,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+                if url == 'cid':
+                        Modelsurl = get_object_or_404(Modelskey(url),pk=id)
+                        form = Formskey(url)(instance=Modelsurl)
+                        ciddata = Modelskey(url).objects.filter(cid=id)
+                        sitedata = Site.objects.filter(cid_id=id)
+                        cidroom =  paging(ciddata,request.GET.get('page','1'))
+                        siteroom = paging(sitedata,request.GET.get('page','1'))
+                        return render_to_response(url+'list.html',{'curl':curl,'form':form,'cidroom':cidroom ,'room':siteroom ,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+                if url == 'site':
+                        cidnum =re.findall(r"^(\d+)[A-Z]$", id)[0]
+                        #cidnum='2014'
+                        ciddata =  Cid.objects.filter(cid=cidnum) 
+                        sitedata = Modelskey(url).objects.filter(siteid=id) 
+                        linedata = Line.objects.filter(siteid_id=id)
+                        servicedata = Service.objects.filter(siteid_id=id)
+                        cidroom =  paging(ciddata,request.GET.get('page','1'))
+                        siteroom = paging(sitedata,request.GET.get('page','1'))
+                        lineroom = paging(linedata,request.GET.get('page','1'))
+                        serviceroom = paging(servicedata,request.GET.get('page','1'))
+                        return render_to_response(url+'list.html',{'curl':curl,'cidroom':cidroom ,'siteroom':siteroom ,'room':lineroom ,'serviceroom':serviceroom,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+                if url == 'line':
+                        linedata = Modelskey(url).objects.filter(lineid=id)  
+                        siteroom=linedata[0].siteid
+                        #sitedata=a.objects.all()
+                        #siteroom =  paging(sitedata,request.GET.get('page','1'))
+                        ciddata = Cid.objects.filter(cid=siteroom.cid_id)
+                        cidroom =  paging(ciddata,request.GET.get('page','1'))
+                        lineroom =  paging(linedata,request.GET.get('page','1'))
+                        return render_to_response(url+'list.html',{'curl':curl,'room': lineroom,'site':siteroom,'cidroom':cidroom,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+
+                if url == 'service':
+                        servicedata = Modelskey(url).objects.filter(serviceid=id)
+                        siteroom=servicedata[0].siteid
+                        ciddata = Cid.objects.filter(cid=siteroom.cid_id)
+                        cidroom =  paging(ciddata,request.GET.get('page','1'))
+                        serviceroom =  paging(servicedata,request.GET.get('page','1'))
+                        return render_to_response(url+'list.html',{'curl':curl,'room': serviceroom,'site':siteroom,'cidroom':cidroom,'today':datetime.datetime.today()},context_instance=RequestContext(request)) 
+                return render_to_response(url+'list.html',{'curl':curl,'cidroom':cidroom ,'room':siteroom ,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+        return HttpResponseRedirect('/login/')
+
+@csrf_exempt
+def search(request):
+        curl = request.get_full_path()
+        if request.user.is_authenticated():
+                error = False
+                if 'q' in request.GET:
+                        q = request.GET['q']
+                        info = request.GET['info']
+                        if not q:
+                                error = True
+                        else:
+                            if info == "cid" : 
+                               data = Cid.objects.filter(cid__icontains=q)
+                               room = paging(data,request.GET.get('page','1'))
+                               type = 'cid'
+                            elif info == "sitename" :
+                               data = Site.objects.filter(sitename__icontains=q)
+                               room = paging(data,request.GET.get('page','1'))
+                               type = 'site'
+                            elif info == "siteaddr" :
+                               data = Site.objects.filter(siteaddr__icontains=q)
+                               room = paging(data,request.GET.get('page','1'))
+                               type = 'site'
+                            elif info == "cidcont" :
+                               data = Site.objects.filter(sitecontact__icontains=q)
+                               room = paging(data,request.GET.get('page','1'))
+                               type = 'site'
+                            elif info == "ip" :
+                               data = Line.objects.filter(Q(linewanip__icontains=q) | Q(linelanip__icontains=q))
+                               room = paging(data,request.GET.get('page','1'))
+                               type = 'line'
+                            elif info == "old_CID" :
+                               data = Site.objects.filter(oldcid__icontains=q)
+                               room = paging(data,request.GET.get('page','1'))
+                               type = 'site'
+                            else:
+                               error = True
+                            if len(data) < 1:
+                                        error = True
+                            return render_to_response('searchlist.html',{'curl':curl,'room':room,'error':error,'type':type,'today':datetime.datetime.today()},context_instance=RequestContext(request))
+                return render_to_response('index.html',{'error':error})
+        return HttpResponseRedirect('/login/')

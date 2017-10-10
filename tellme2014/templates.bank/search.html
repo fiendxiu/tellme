@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block search  %} 
+<div style="width:230px; float:left; overflow:hidden" >
+	<form action="" method="POST">
+     <select name="select" size="4"  >
+         <option value="cid" selected>CIDAAAAA</option>
+         <option value="name">客户名</option>
+         <option value="addr" >地址</option>
+         <option value="ip">IP</option>
+     </select>  
+      :::::::::::::  <input type="text" name="q" />
+             <input type="submit" value="查询">
+	</form>
+</div>
+{% endblock %}

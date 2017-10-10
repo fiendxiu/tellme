@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+ <p style="color: red;">
+          增加CID:{{ cid }}&nbsp;OK
+        </p>
+<div class="form-actions">
+        <a href="/cid/add"><button  style="btn btn-primary">增加新的CID</button></a>
+           &nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+         <a href="/site/add/{{ cid }}" ><button  style="btn btn-primary">增加CID:{{ cid }}站点资料</button></a>
+　　　　　&nbsp; &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;
+    </div> 
+{% endblock %}

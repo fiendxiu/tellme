@@ -1,0 +1,106 @@
+<!DOCTYPE html >
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tellme</title>
+ <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="/static/bootstrap/js/tellme.js"></script>
+  {% block head1  %} {% endblock %}
+</head>
+<body>
+<div class="container">
+        <div class="nav nav-tabs"> 欢迎用户&nbsp; <a style="color: red;">{{ user }}</a>  &nbsp; 登录 </div>
+        <div>
+        <ul class="nav nav-tabs">
+        <li class="active">
+        <a href="/">搜索</a>
+        </li>
+         
+        <li>
+        <a href="/jtid/">集团ID资料</a>
+        </li>
+        <li>
+        <a href="/cid/">客户CID资料</a>
+        </li>
+        <li>
+        <a href="/site/">站点资料</a>
+        </li>
+        <li>
+        <a href="/line/">线路资料</a>
+        </li>
+         <li>
+        <a href="/service/">站点服务资料</a>
+        </li> 
+        {% if  user.is_staff  %}
+        <li>
+        <a href="/admin/" rel="external">后台管理</a>
+        </li>
+        {% else %}
+        <li>
+        <a href="/user/change_pass/">修改密码</a>
+        </li>
+        {% endif %}
+        <li>
+        <a href="/logout/">注销</a>
+        </li>
+        </ul>
+        </div>
+         <div>
+          {% block search  %}
+<div >
+          <form  action="/search/" method="GET"> {% csrf_token %}
+                 <select name="info">
+		      <option value="hetong">客户合同名</option>
+		      <option value="cid">CID</option>
+                      <option value="sitename">客户站点名称</option>
+                    　<option value="siteaddr">客户地址</option>
+                    　<option value="cidcont">联络资料</option>
+                    　<option value="ip">IP地址</option>
+                   < !<option value="old_CID">旧的CID</option> >
+		      <option value="PE">接入PE</option>
+                      <option value="svrnum">公司服务编号</option>
+                      <option value="linenum">线路编号</option>
+                </select>&nbsp;:&nbsp;&nbsp;
+                <input class="span2" type="text" name="q"  placeholder="输入你要查询的资料">
+                <input type="checkbox" name="filterOff" checked="true" />过滤OFF
+                <button class="btn" type="submit">搜一下</button>
+        </form>
+</div>
+{% endblock %}
+          </div>
+<div>{% block searchtype %} {% endblock %} </div>
+         <div>{% block searchlist  %}
+              
+         {% endblock %}</div> 
+         <div>{% block add  %}{% endblock %}</div>
+    <div style="width:1050px; float:left; overflow:hidden; margin-left:5px">
+        <div>
+        {% block content %} {% endblock %}
+        </div>
+          {% block search_ye2 %}
+         {% if room.has_previous %}
+            {% if room.pervious_page_number %}
+                   <a href="?page={{ room.pervious_page_number }}" >上一页</a>
+                     {% else %}
+                     <a href="?page=1" >上一页</a>
+             {% endif %}
+        {% endif %}
+        当前页 {{ room.number }} 共 {{ room.paginator.num_pages }}
+        {% if room.has_next %}
+        <a href="?page={{ room.next_page_number }}">下一页</a>
+        {% endif %}
+       {% endblock %}
+
+    </div>
+
+
+
+<div class="text-align:center">Powered by <font style="font-weight: bold; color: #000">fnetlink.com.hk v1.0</font> &copy 2014</div>
+</div>
+</body>
+</html>

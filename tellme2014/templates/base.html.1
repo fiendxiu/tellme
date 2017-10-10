@@ -1,0 +1,73 @@
+<!DOCTYPE html >
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Tellme</title>
+ <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap-responsive.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap-responsive.min.css" rel="stylesheet" type="text/css" />
+<link href="/static/bootstrap/css/bootstrap.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.js"></script>
+<script type="text/javascript" src="/static/bootstrap/js/tellme.js"></script>
+  {% block head1  %} {% endblock %}
+</head>
+<body>
+<div class="container">
+        <div class="nav nav-tabs"> 欢迎用户&nbsp; <a style="color: red;">{{ user }}</a>  &nbsp; 登录 </div>
+        <ul class="nav nav-tabs">
+        <li class="active">
+        <a href="/">搜索</a>
+        </li>
+         
+        <li>
+        <a href="/jtid/">集团ID资料</a>
+        </li>
+        <li>
+        <a href="/cid/">客户CID资料</a>
+        </li>
+        <li>
+        <a href="/site/">站点资料</a>
+        </li>
+        <li>
+        <a href="/line/">线路资料</a>
+        </li>
+         <li>
+        <a href="/service/">站点服务资料</a>
+        </li> 
+        {% if  user.is_staff  %}
+        <li>
+        <a href="/admin/" rel="external">后台管理</a>
+        </li>
+        {% else %}
+        <li>
+        <a href="/user/change_pass/">修改密码</a>
+        </li>
+        {% endif %}
+        <li>
+        <a href="/logout/">注销</a>
+        </li>
+        </ul>
+         {% block search  %} {% endblock %}
+         {% block searchlist  %} {% endblock %}
+         {% block add  %} {% endblock %}
+    <div style="width:1050px; float:left; overflow:hidden; margin-left:5px">
+        <div>
+        {% block content %} {% endblock %}
+        </div>
+        <% block search_ye %>
+        {% if room.has_previous %}
+        <a href="{{ curl }}&page={{ room.pervious_page_number }}" >上一页</a>
+        {% endif %}
+        当前页 {{ room.number }} 共 {{ room.paginator.num_pages }}
+        {% if room.has_next %}
+        <a href="{{ curl }}&page={{ room.next_page_number }}">下一页</a>
+        {% endif %}
+          {% endblock %}
+    </div>
+
+
+
+</div>
+</body>
+</html>
